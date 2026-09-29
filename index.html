@@ -1,104 +1,188 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Shravan - Study Tart</title>
+<title>Shravan - Piemaker Tracker</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: 'Segoe UI', system-ui, sans-serif;
-    background: radial-gradient(circle at 50% 65%, #e23a2e 0%, #7a2a5a 35%, #3a1f5d 62%, #150f2e 100%);
-    color: #fff; min-height: 100vh;
-    display: flex; justify-content: center;
+    background: #0e3a32;
+    color: #e8f0ec;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
   }
-  .page { width: 100%; max-width: 1000px; padding: 20px 28px 0 28px; display: flex; flex-direction: column; min-height: 100vh; }
-  .top { display: flex; justify-content: space-between; font-size: 12px; letter-spacing: 2px; opacity: 0.9; }
-  .hero { display: flex; justify-content: space-between; align-items: center; margin-top: 18px; }
-  .left h1 { font-size: 22px; font-weight: 700; }
-  .left p { font-size: 12px; opacity: 0.7; margin-top: 2px; }
-  .right { display: flex; align-items: center; }
-  .right b { font-size: 18px; margin-right: 12px; }
-  .cart { width: 42px; height: 42px; border-radius: 50%; background: #ff5a2b; border: none; color: #fff; font-size: 18px; cursor: pointer; box-shadow: 0 0 24px #ff5a2baa; }
-  .stage { position: relative; flex: 1; display: flex; justify-content: center; align-items: flex-end; overflow: hidden; min-height: 440px; }
-  .tart-wrap { position: relative; width: min(520px, 80vw); aspect-ratio: 1.35 / 1; }
-  svg.arc { position: absolute; left: 50%; top: 0; transform: translateX(-50%); width: 130%; height: auto; }
+  .page {
+    width: 100%;
+    max-width: 1100px;
+    padding: 24px 32px 0 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    letter-spacing: 2px;
+    opacity: 0.9;
+  }
+  .hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-top: 28px;
+  }
+  .left h1 { font-size: 22px; font-weight: 600; }
+  .left p { font-size: 12px; opacity: 0.6; margin-top: 4px; }
+  .center { text-align: center; font-size: 11px; letter-spacing: 2px; opacity: 0.7; }
+  .sizes { display: flex; gap: 10px; justify-content: center; margin-top: 10px; }
+  .sizes span {
+    width: 32px; height: 32px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.3);
+    display: grid; place-items: center; font-size: 12px; cursor: default;
+  }
+  .sizes span.on { background: #e8f0ec; color: #0e3a32; }
+  .right { text-align: right; }
+  .right b { font-size: 18px; }
+  .cart {
+    width: 42px; height: 42px; border-radius: 50%;
+    background: #ff5a2b; border: none; color: #fff;
+    font-size: 18px; margin-left: 16px; cursor: pointer;
+    box-shadow: 0 0 24px #ff5a2baa;
+  }
+  /* stage */
+  .stage { position: relative; height: 520px; margin-top: 10px; }
+  svg.arc {
+    position: absolute; left: 50%; bottom: -40px;
+    transform: translateX(-50%);
+  }
   .pie {
-    position: absolute; left: 50%; bottom: -46%; transform: translateX(-50%);
-    width: 100%; aspect-ratio: 1 / 1; border-radius: 50%;
-    background: radial-gradient(circle at 50% 35%, #2b1a4a, #160f2e);
-    border: 10px solid #e6c89a; display: grid; place-items: center;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.55);
+    position: absolute; left: 50%; bottom: -110px;
+    transform: translateX(-50%);
+    width: 560px; height: 560px; border-radius: 50%;
+    background: radial-gradient(circle at 50% 35%, #1c5a4e, #0e3a32);
+    border: 14px solid #e6c89a;
+    display: grid; place-items: center;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5);
   }
-  .pie-label { background: rgba(0,0,0,0.6); padding: 8px 24px; border-radius: 99px; font-size: 22px; font-weight: 800; margin-bottom: 38%; }
+  .pie-inner {
+    font-size: 80px; text-align: center;
+  }
+  .pie-label {
+    position: absolute; bottom: 170px; left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.55);
+    padding: 8px 22px; border-radius: 99px;
+    font-size: 20px; font-weight: 800;
+  }
+  /* arc buttons */
   .tab {
-    position: absolute; z-index: 5;
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.25);
-    color: #fff; font-size: 10px; letter-spacing: 2px;
-    padding: 10px 16px; border-radius: 14px;
-    cursor: pointer; backdrop-filter: blur(8px);
-    transition: 0.25s;
+    position: absolute;
+    background: none; border: none; color: #9fc0b5;
+    font-size: 11px; letter-spacing: 2px; cursor: pointer;
+    transition: color 0.25s, transform 0.25s;
+    z-index: 5;
   }
-  .tab:hover { background: rgba(255,255,255,0.18); transform: scale(1.06); }
-  .tab.on { background: #fff; color: #2b1030; }
-  .tab .dotm { display: block; width: 6px; height: 6px; border-radius: 50%; background: currentColor; margin: 5px auto 0 auto; }
+  .tab:hover { color: #fff; transform: scale(1.08); }
+  .tab.on { color: #fff; }
+  .tab .dotm {
+    display: block; width: 8px; height: 8px; border-radius: 50%;
+    background: #fff; margin: 6px auto 0 auto;
+  }
+  /* dropdown panels */
   .panel {
-    position: absolute; left: 50%; bottom: 62%; transform: translateX(-50%) translateY(12px);
-    width: 340px; max-width: 86vw; max-height: 0; overflow: hidden;
-    background: #1a1033; border: 1px solid rgba(255,255,255,0.18); border-radius: 16px;
-    opacity: 0; transition: all 0.45s cubic-bezier(0.2,1,0.3,1); z-index: 10;
+    position: absolute; left: 50%; bottom: 300px;
+    transform: translateX(-50%) translateY(20px);
+    width: 380px; max-height: 0; overflow: hidden;
+    background: #0a2a24; border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 18px; opacity: 0;
+    transition: max-height 0.5s cubic-bezier(0.2,1,0.3,1), opacity 0.4s, transform 0.5s cubic-bezier(0.2,1,0.3,1);
+    z-index: 10;
   }
-  .panel.open { max-height: 300px; opacity: 1; transform: translateX(-50%) translateY(0); overflow-y: auto; }
-  .panel h3 { padding: 12px 16px; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.12); }
-  .panel label { display: flex; gap: 8px; align-items: center; padding: 8px 16px; font-size: 12px; cursor: pointer; }
-  .panel label:hover { background: rgba(255,255,255,0.07); }
-  .panel input { width: 15px; height: 15px; accent-color: #ff5a2b; }
+  .panel.open { max-height: 320px; opacity: 1; transform: translateX(-50%) translateY(0); }
+  .panel h3 { padding: 14px 18px; font-size: 14px; letter-spacing: 1px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+  .panel label {
+    display: flex; gap: 10px; align-items: center;
+    padding: 9px 18px; font-size: 13px; cursor: pointer;
+  }
+  .panel label:hover { background: rgba(255,255,255,0.06); }
+  .panel input { width: 16px; height: 16px; accent-color: #ff5a2b; }
   .done-line { text-decoration: line-through; opacity: 0.5; }
-  .foot { display: flex; justify-content: space-between; font-size: 10px; opacity: 0.5; padding: 10px 0 14px 0; }
+  /* day routine */
+  .routine {
+    position: absolute; left: 32px; bottom: 60px;
+    font-size: 12px; line-height: 1.9; opacity: 0.9;
+  }
+  .routine h4 { letter-spacing: 2px; font-size: 12px; margin-bottom: 6px; color: #ffd9a0; }
+  .routine b { color: #fff; }
+  .foot {
+    display: flex; justify-content: space-between;
+    font-size: 11px; opacity: 0.5; padding: 12px 0 18px 0;
+  }
 </style>
 </head>
+
 <body>
 <div class="page">
-  <div class="top"><div>SHRAVAN</div><div>o</div></div>
+  <div class="top"><div>☰ &nbsp; SHRAVAN</div><div>♡ &nbsp; ◉</div></div>
+
   <div class="hero">
     <div class="left"><h1>Study Tart</h1><p id="countLabel">0 of 0 done</p></div>
-    <div class="right"><b id="pctTop">0%</b><button class="cart">/</button></div>
+    <div class="center">SELECT WEEK<div class="sizes"><span>W1</span><span class="on">W2</span><span>W3</span></div></div>
+    <div class="right"><b id="pctTop">0%</b><button class="cart" onclick="window.scrollTo({top:0,behavior:'smooth'})">↗</button></div>
   </div>
+
   <div class="stage">
-    <div class="tart-wrap">
-      <svg class="arc" viewBox="0 0 700 360">
-        <path d="M 80 340 A 270 270 0 0 1 620 340" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
-        <path id="prog" d="M 80 340 A 270 270 0 0 1 620 340" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-dasharray="848" stroke-dashoffset="848" style="transition: stroke-dashoffset 0.8s"/>
-      </svg>
-      <button class="tab" style="left:-10%; top:44%" data-p="p1">WEEK 1<span class="dotm"></span></button>
-      <button class="tab" style="left:16%; top:16%" data-p="p2">WEEK 2<span class="dotm"></span></button>
-      <button class="tab" style="left:64%; top:16%" data-p="p3">WEEK 3<span class="dotm"></span></button>
-      <button class="tab" style="left:92%; top:44%" data-p="p4">DAY<span class="dotm"></span></button>
-      <div class="pie"><div class="pie-label" id="pctPie">0%</div></div>
-      <div class="panel" id="p1"><h3>WEEK 1 - Sep 30 to Oct 4</h3><div id="w1"></div></div>
-      <div class="panel" id="p2"><h3>WEEK 2 - Oct 5 to Oct 11</h3><div id="w2"></div></div>
-      <div class="panel" id="p3"><h3>WEEK 3 - Oct 12 to Oct 19</h3><div id="w3"></div></div>
-      <div class="panel" id="p4">
-        <h3>How My Day Looks - Tomorrow</h3>
-        <div id="day">
-          <label><input type="checkbox" data-d /> <span>School + Tuition till 4:30</span></label>
-          <label><input type="checkbox" data-d /> <span>Gym 5:00 - 6:00</span></label>
-          <label><input type="checkbox" data-d /> <span>Study 6:30 - 9:00</span></label>
-          <label><input type="checkbox" data-d /> <span>Free hour 9:00 - 10:00</span></label>
-          <label><input type="checkbox" data-d /> <span>Sleep 10:00</span></label>
-        </div>
+    <svg class="arc" width="700" height="360" viewBox="0 0 700 360">
+      <path id="track" d="M 80 340 A 270 270 0 0 1 620 340" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="2"/>
+      <path id="prog" d="M 80 340 A 270 270 0 0 1 620 340" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-dasharray="848" stroke-dashoffset="848" style="transition: stroke-dashoffset 0.8s cubic-bezier(0.2,1,0.3,1)"/>
+    </svg>
+
+    <button class="tab" style="left:18%; bottom:62%" data-p="p1">WEEK 1<span class="dotm"></span></button>
+    <button class="tab" style="left:36%; bottom:76%" data-p="p2">WEEK 2<span class="dotm"></span></button>
+    <button class="tab" style="left:57%; bottom:76%" data-p="p3">WEEK 3<span class="dotm"></span></button>
+    <button class="tab" style="left:74%; bottom:62%" data-p="p4">DAY<span class="dotm"></span></button>
+
+    <div class="pie"><div class="pie-inner">📚</div><div class="pie-label" id="pctPie">0%</div></div>
+
+    <div class="panel" id="p1"><h3>WEEK 1 - Sep 30 to Oct 4</h3><div id="w1"></div></div>
+    <div class="panel" id="p2"><h3>WEEK 2 - Oct 5 to Oct 11</h3><div id="w2"></div></div>
+    <div class="panel" id="p3"><h3>WEEK 3 - Oct 12 to Oct 19</h3><div id="w3"></div></div>
+    <div class="panel" id="p4">
+      <h3>How My Day Looks - Tomorrow</h3>
+      <div id="day">
+        <label><input type="checkbox" data-d /> <span>School + Tuition <b>till 4:30</b></span></label>
+        <label><input type="checkbox" data-d /> <span>Gym <b>5:00 - 6:00</b></span></label>
+        <label><input type="checkbox" data-d /> <span>Study <b>6:30 - 9:00</b></span></label>
+        <label><input type="checkbox" data-d /> <span>Free hour <b>9:00 - 10:00</b></span></label>
+        <label><input type="checkbox" data-d /> <span>Sleep <b>10:00</b></span></label>
       </div>
     </div>
+
+    <div class="routine">
+      <h4>How My Day Looks</h4>
+      School + tuition <b>till 4:30</b><br>
+      Gym <b>5 - 6</b><br>
+      Study <b>6:30 - 9:00</b><br>
+      Sleep <b>10:00</b>
+    </div>
   </div>
-  <div class="foot"><div>Delivery Contact us</div><div>Privacy</div></div>
+
+  <div class="foot"><div>Delivery &nbsp; Contact us</div><div>Privacy</div></div>
 </div>
+
 <script>
   const w1 = ["Sep 30 - Hindi 1 + Electrolysis L2","Oct 1 - SUPW trip Zero","Oct 2 - Calorimetry + Chemistry + History 1","Oct 3 - Hindi catchup + Biology 1","Oct 4 - Metallurgy L1 + Biology 1 + Geo 2"];
   const w2 = ["Oct 5 - Physics 2 + Geo 2 + English 1","Oct 6 - Hindi finish + History 1 + Biology 1","Oct 7 - English 1","Oct 8 - Physics 3 + Geo 3","Oct 9 - Biology 1","Oct 10 - Metallurgy L2 + History 1","Oct 11 - Physics 4 + English 1 + Geo 2"];
   const w3 = ["Oct 12 - Bio 1 + Geo 1 + Comp 1","Oct 13 - History last + Judiciary + English last","Oct 14 - Comp 1 + Revision","Oct 15 - Bio last + Geo 2","Oct 16 - Buffer","Oct 17 - Full revision sweep","Oct 18 - Buffer + papers","Oct 19 - 100% done"];
   const saved = JSON.parse(localStorage.getItem('pie') || '{}');
   function save(){ localStorage.setItem('pie', JSON.stringify(saved)); upd(); }
+
   function render(id, arr, pre){
     const box = document.getElementById(id);
     arr.forEach((t,i)=>{
@@ -118,6 +202,7 @@
     if(c.checked) c.nextElementSibling.classList.add('done-line');
     c.onchange=()=>{ saved['d'+i]=c.checked; c.nextElementSibling.classList.toggle('done-line',c.checked); save(); };
   });
+
   document.querySelectorAll('.tab').forEach(t=>{
     t.onclick=()=>{
       const p=document.getElementById(t.dataset.p);
@@ -127,6 +212,7 @@
       if(!was){ p.classList.add('open'); t.classList.add('on'); }
     };
   });
+
   function upd(){
     const boxes=[...document.querySelectorAll('input[type=checkbox]')];
     const d=boxes.filter(b=>b.checked).length;
