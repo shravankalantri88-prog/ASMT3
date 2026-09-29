@@ -1,90 +1,476 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Shravan - Finish by Oct 19</title>
-<style>
-* { box-sizing: border-box; transition: all .25s ease; }
-body { font-family: system-ui, sans-serif; max-width: 720px; margin: 0 auto; padding: 20px 16px 60px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
-h1 { color: white; font-size: 24px; }
-.subtitle { color: rgba(255,255,255,.9); margin-top: -8px; }
-.card { background: white; border-radius: 16px; padding: 18px; margin: 14px 0; box-shadow: 0 4px 20px rgba(0,0,0,.15); }
-ul { line-height: 2; list-style: none; padding-left: 4px; }
-li { background: #f8f9ff; border-radius: 10px; padding: 6px 12px; margin: 6px 0; border-left: 4px solid #667eea; }
-input[type=checkbox] { width: 18px; height: 18px; accent-color: #4caf50; cursor: pointer; }
-details { background: white; border-radius: 16px; margin: 12px 0; overflow: hidden; }
-summary { font-weight: 700; cursor: pointer; font-size: 17px; padding: 16px 18px; background: linear-gradient(90deg, #ff9a56, #ff6b6b); color: white; list-style: none; }
-details:nth-of-type(2) summary { background: linear-gradient(90deg, #4facfe, #00f2fe); }
-details:nth-of-type(3) summary { background: linear-gradient(90deg, #43e97b, #38f9d7); }
-details ul { padding: 12px 16px; }
-.badge { display: inline-block; background: rgba(255,255,255,.3); padding: 2px 12px; border-radius: 20px; font-size: 13px; margin-left: 6px; }
-.progress { background: #eee; border-radius: 10px; height: 14px; overflow: hidden; margin-top: 10px; }
-.bar { height: 14px; background: linear-gradient(90deg, #43e97b, #38f9d7); width: 0%; border-radius: 10px; }
-#pct { font-weight: 700; color: #667eea; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Shravan — Finish by Oct 19</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #0a0e1a;
+      --card: rgba(255, 255, 255, 0.06);
+      --accent: #7c6cff;
+      --accent2: #00e5ff;
+      --green: #00e676;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: #eef;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .bg {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(600px 400px at 20% 10%, #7c6cff44, transparent),
+        radial-gradient(600px 400px at 80% 20%, #00e5ff33, transparent),
+        radial-gradient(700px 500px at 50% 90%, #ff5c8a22, transparent),
+        #0a0e1a;
+    }
+
+    .wrap {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 28px 18px 80px;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 36px 20px;
+      background: linear-gradient(135deg, rgba(124, 108, 255, 0.25), rgba(0, 229, 255, 0.15));
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 24px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    }
+
+    .hero h1 {
+      font-size: 32px;
+      background: linear-gradient(90deg, #fff, #a5b4ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      opacity: 0.7;
+      margin-top: 8px;
+      font-size: 14px;
+    }
+
+    .ring-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 22px 0 6px;
+    }
+
+    .ring {
+      width: 110px;
+      height: 110px;
+      position: relative;
+    }
+
+    .ring svg {
+      transform: rotate(-90deg);
+    }
+
+    .ring b {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+    }
+
+    .stats {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .stat {
+      background: var(--card);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+    }
+
+    .bar-bg {
+      background: rgba(255, 255, 255, 0.1);
+      height: 12px;
+      border-radius: 99px;
+      overflow: hidden;
+      margin-top: 12px;
+    }
+
+    #bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2), var(--green));
+      border-radius: 99px;
+      transition: width 0.5s;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 20px;
+      margin: 16px 0;
+      backdrop-filter: blur(14px);
+    }
+
+    .card h2 {
+      font-size: 17px;
+      margin-bottom: 12px;
+    }
+
+    .subj {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      padding: 12px 14px;
+      border-radius: 14px;
+      margin: 8px 0;
+    }
+
+    .subj.done {
+      opacity: 0.55;
+    }
+
+    .subj.done .name {
+      text-decoration: line-through;
+    }
+
+    .name {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .emoji {
+      font-size: 20px;
+      margin-right: 8px;
+    }
+
+    .dots {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .dot {
+      width: 24px;
+      height: 24px;
+      border-radius: 8px;
+      border: 2px solid rgba(255, 255, 255, 0.25);
+      cursor: pointer;
+      appearance: none;
+      background: transparent;
+    }
+
+    .dot:checked {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-color: transparent;
+      transform: scale(1.1);
+    }
+
+    details {
+      background: var(--card);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 18px;
+      margin: 12px 0;
+      overflow: hidden;
+    }
+
+    summary {
+      cursor: pointer;
+      padding: 16px 18px;
+      font-weight: 700;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details:nth-of-type(1) summary {
+      background: linear-gradient(90deg, #ff9a56, #ff5c8a);
+    }
+
+    details:nth-of-type(2) summary {
+      background: linear-gradient(90deg, #4facfe, #6a5cff);
+    }
+
+    details:nth-of-type(3) summary {
+      background: linear-gradient(90deg, #43e97b, #00c9a7);
+      color: #06281c;
+    }
+
+    .badge {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 3px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 400;
+    }
+
+    .day {
+      padding: 10px 18px;
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+      font-size: 14px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .day input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--green);
+    }
+
+    .day.checked {
+      opacity: 0.45;
+      text-decoration: line-through;
+    }
+
+    .reset {
+      text-align: center;
+      margin-top: 18px;
+      opacity: 0.5;
+      font-size: 12px;
+      cursor: pointer;
+    }
+  </style>
 </head>
+
 <body>
-<h1>📚 Shravan - Finish by Oct 19</h1>
-<p class="subtitle">Pre-prelims Nov 2 – Dec 5 · Only new portion</p>
-<div class="card">
-<b>Leftover Portion</b>
-<ul>
-<li>📖 English - 4 lessons <input type="checkbox" class="t"> <input type="checkbox" class="t"> <input type="checkbox" class="t"> <input type="checkbox" class="t"></li>
-<li>📝 Hindi - 2 lessons <input type="checkbox" class="t"> <input type="checkbox" class="t"></li>
-<li>🏛️ History - 4 + Judiciary <input type="checkbox" class="t"> <input type="checkbox" class="t"> <input type="checkbox" class="t"> <input type="checkbox" class="t"> <input type="checkbox" class="t"></li>
-<li>🌍 Geography - 12 small <input type="checkbox" class="t"> <input type="checkbox" class="t"> <input type="checkbox" class="t"> <input type="checkbox" class="t"></li>
-<li>⚡ Physics - 4 incl Calorimetry <input type="checkbox" class="t"> <input type="checkbox" class="t"> <input type="checkbox" class="t"> <input type="checkbox" class="t"></li>
-<li>🧪 Chemistry - Electrolysis, Metallurgy <input type="checkbox" class="t"> <input type="checkbox" class="t"></li>
-<li>🧬 Biology - 6 chapters <input type="checkbox" class="t"> <input type="checkbox" class="t"> <input type="checkbox" class="t"> <input type="checkbox" class="t"> <input type="checkbox" class="t"> <input type="checkbox" class="t"></li>
-<li>💻 Computer - pending <input type="checkbox" class="t"></li>
-</ul>
-<div class="progress"><div class="bar" id="bar"></div></div>
-<p id="pct">0% done</p>
-</div>
-<details open>
-<summary>Week 1 - Wed Sep 30 to Sun Oct 4 <span class="badge">starts tomorrow</span></summary>
-<ul>
-<li>Sep 30 Wed - Hindi 1 + Electrolysis L2</li>
-<li>Oct 1 Thu - SUPW trip - Zero</li>
-<li>Oct 2 Fri Holiday 8h - Calorimetry finish + Chemistry finish + History 1</li>
-<li>Oct 3 Sat - Hindi catchup + Biology 1</li>
-<li>Oct 4 Sun 6h - Metallurgy L1 + Biology 1 + Geo 2</li>
-</ul>
-</details>
-<details>
-<summary>Week 2 - Mon Oct 5 to Sun Oct 11</summary>
-<ul>
-<li>Oct 5 Mon Bunk - Physics 2 + Geo 2 + English 1</li>
-<li>Oct 6 Tue Bunk - Hindi finish + History 1 + Biology 1</li>
-<li>Oct 7 Wed - English 1</li>
-<li>Oct 8 Thu Bunk - Physics 3 + Geo 3</li>
-<li>Oct 9 Fri - Biology 1</li>
-<li>Oct 10 Sat - Metallurgy L2 + History 1</li>
-<li>Oct 11 Sun - Physics 4 + English 1 + Geo 2</li>
-</ul>
-</details>
-<details>
-<summary>Week 3 - Mon Oct 12 to Sun Oct 19 🏁</summary>
-<ul>
-<li>Oct 12 Mon Bunk - Bio 1 + Geo 1 + Comp 1</li>
-<li>Oct 13 Tue Bunk - History last + Judiciary + English last</li>
-<li>Oct 14 Wed - Comp 1 + Revision</li>
-<li>Oct 15 Thu Bunk - Bio last + Geo 2</li>
-<li>Oct 16 Fri - Buffer</li>
-<li>Oct 17 Sat Bunk - Full revision sweep</li>
-<li>Oct 18 Sat - Buffer + papers</li>
-<li>Oct 19 Sun - 100% done 🎉</li>
-</ul>
-</details>
-<script>
-const boxes = document.querySelectorAll('.t');
-function upd(){
-const d = [...boxes].filter(b=>b.checked).length;
-const p = Math.round(d/boxes.length*100);
-document.getElementById('bar').style.width = p+'%';
-document.getElementById('pct').innerText = p+'% done';
-}
-boxes.forEach(b=>b.onclick=upd);
-</script>
+  <div class="bg"></div>
+
+  <div class="wrap">
+    <div class="hero">
+      <h1>⚡ Shravan — Finish by Oct 19</h1>
+      <p>Pre-prelims Nov 2 – Dec 5 • Only new portion</p>
+
+      <div class="ring-wrap">
+        <div class="ring">
+          <svg width="110" height="110">
+            <circle cx="55" cy="55" r="48" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="10" />
+            <circle id="ring" cx="55" cy="55" r="48" fill="none" stroke="url(#g)" stroke-width="10"
+              stroke-linecap="round" stroke-dasharray="301" stroke-dashoffset="301" />
+            <defs>
+              <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#7c6cff" />
+                <stop offset="1" stop-color="#00e5ff" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <b id="pct">0%</b>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat" id="sDone">✅ 0 done</div>
+        <div class="stat" id="sLeft">📝 0 left</div>
+        <div class="stat">🔥 20 days left</div>
+      </div>
+
+      <div class="bar-bg">
+        <div id="bar"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📦 Leftover Portion</h2>
+      <div id="subjects"></div>
+    </div>
+
+    <details open>
+      <summary>
+        Week 1 — Sep 30 to Oct 4
+        <span class="badge">starts tomorrow</span>
+      </summary>
+      <div id="w1"></div>
+    </details>
+
+    <details>
+      <summary>
+        Week 2 — Oct 5 to Oct 11
+        <span class="badge">grind week</span>
+      </summary>
+      <div id="w2"></div>
+    </details>
+
+    <details>
+      <summary>
+        Week 3 — Oct 12 to Oct 19 🏁
+        <span class="badge">finish line</span>
+      </summary>
+      <div id="w3"></div>
+    </details>
+
+    <div class="reset" onclick="localStorage.clear();location.reload()">
+      reset all progress
+    </div>
+  </div>
+
+  <script>
+    const subjects = [
+      ["📘", "English - 4 lessons", 4],
+      ["📕", "Hindi - 2 lessons", 2],
+      ["🏛️", "History - 4 + Judiciary", 5],
+      ["🌍", "Geography - 12 small", 4],
+      ["⚡", "Physics - 4 incl Calorimetry", 4],
+      ["🧪", "Chemistry - Electrolysis, Metallurgy", 2],
+      ["🧬", "Biology - 6 chapters", 6],
+      ["💻", "Computer - pending", 1],
+    ];
+
+    const w1 = [
+      "Sep 30 Wed - Hindi 1 + Electrolysis L2",
+      "Oct 1 Thu - SUPW trip - Zero",
+      "Oct 2 Fri Holiday 8h - Calorimetry finish + Chemistry finish + History 1",
+      "Oct 3 Sat - Hindi catchup + Biology 1",
+      "Oct 4 Sun 6h - Metallurgy L1 + Biology 1 + Geo 2",
+    ];
+
+    const w2 = [
+      "Oct 5 Mon Bunk - Physics 2 + Geo 2 + English 1",
+      "Oct 6 Tue Bunk - Hindi finish + History 1 + Biology 1",
+      "Oct 7 Wed - English 1",
+      "Oct 8 Thu Bunk - Physics 3 + Geo 3",
+      "Oct 9 Fri - Biology 1",
+      "Oct 10 Sat - Metallurgy L2 + History 1",
+      "Oct 11 Sun - Physics 4 + English 1 + Geo 2",
+    ];
+
+    const w3 = [
+      "Oct 12 Mon Bunk - Bio 1 + Geo 1 + Comp 1",
+      "Oct 13 Tue Bunk - History last + Judiciary + English last",
+      "Oct 14 Wed - Comp 1 + Revision",
+      "Oct 15 Thu Bunk - Bio last + Geo 2",
+      "Oct 16 Fri - Buffer",
+      "Oct 17 Sat Bunk - Full revision sweep",
+      "Oct 18 Sat - Buffer + papers",
+      "Oct 19 Sun - 100% done 🎉",
+    ];
+
+    const saved = JSON.parse(localStorage.getItem('shravan') || '{}');
+
+    function save() {
+      localStorage.setItem('shravan', JSON.stringify(saved));
+      upd();
+    }
+
+    const subBox = document.getElementById('subjects');
+
+    subjects.forEach((s, i) => {
+      const d = document.createElement('div');
+      d.className = 'subj';
+      d.innerHTML = `
+        <div>
+          <span class="emoji">${s[0]}</span>
+          <span class="name">${s[1]}</span>
+        </div>
+        <div class="dots"></div>
+      `;
+
+      const dots = d.querySelector('.dots');
+
+      for (let k = 0; k < s[2]; k++) {
+        const c = document.createElement('input');
+        c.type = 'checkbox';
+        c.className = 'dot';
+
+        const key = 's' + i + '_' + k;
+        c.checked = !!saved[key];
+
+        c.onchange = () => {
+          saved[key] = c.checked;
+          save();
+          checkSub(d);
+        };
+
+        dots.appendChild(c);
+      }
+
+      function checkSub(el) {
+        const all = [...el.querySelectorAll('.dot')];
+        el.classList.toggle('done', all.length && all.every((x) => x.checked));
+      }
+
+      checkSub(d);
+      subBox.appendChild(d);
+    });
+
+    function week(id, arr, p) {
+      const box = document.getElementById(id);
+
+      arr.forEach((t, i) => {
+        const d = document.createElement('label');
+        d.className = 'day';
+
+        const key = p + i;
+        const c = document.createElement('input');
+        c.type = 'checkbox';
+        c.checked = !!saved[key];
+
+        if (c.checked) d.classList.add('checked');
+
+        c.onchange = () => {
+          saved[key] = c.checked;
+          d.classList.toggle('checked', c.checked);
+          save();
+        };
+
+        d.appendChild(c);
+        d.appendChild(document.createTextNode(t));
+        box.appendChild(d);
+      });
+    }
+
+    week('w1', w1, 'w1');
+    week('w2', w2, 'w2');
+    week('w3', w3, 'w3');
+
+    function upd() {
+      const boxes = [...document.querySelectorAll('input[type=checkbox]')];
+      const done = boxes.filter((b) => b.checked).length;
+      const p = boxes.length ? Math.round((done / boxes.length) * 100) : 0;
+
+      document.getElementById('bar').style.width = p + '%';
+      document.getElementById('pct').innerText = p + '%';
+      document.getElementById('ring').style.strokeDashoffset = 301 - (301 * p) / 100;
+      document.getElementById('sDone').innerText = `✅ ${done} done`;
+      document.getElementById('sLeft').innerText = `📝 ${boxes.length - done} left`;
+
+      if (p === 100) document.getElementById('pct').innerText = '🎉';
+    }
+
+    upd();
+  </script>
 </body>
+
 </html>
