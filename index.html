@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shravan - Finish by Oct 19</title>
+<style>
+body { font-family: system-ui; max-width: 700px; margin: 20px auto; padding: 0 16px; background: #f6f7fb; }
+h1 { font-size: 22px; }
+.card { background: white; border-radius: 12px; padding: 16px; margin: 12px 0; box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+details { background: white; border-radius: 12px; padding: 14px 16px; margin: 10px 0; }
+summary { font-weight: 700; cursor: pointer; font-size: 17px; }
+.badge { display:inline-block; background:#e8f5e9; color:#2e7d32; padding:2px 10px; border-radius:20px; font-size:13px; }
+ul { line-height: 1.8; }
+.progress { background:#eee; border-radius:10px; height:10px; overflow:hidden; }
+.bar { height:10px; background:#4caf50; width:0%; }
+</style>
+</head>
+<body>
+<h1>Shravan - Finish New Portion by Oct 19</h1>
+<p>Pre-prelims Nov 2 - Dec 5. Only circled-underlined chapters.</p>
+
+<div class="card">
+<b>Leftover Portion</b>
+<ul>
+<li>English - 4 lessons <input type="checkbox" class="t"> <input type="checkbox" class="t"> <input type="checkbox" class="t"> <input type="checkbox" class="t"></li>
+<li>Hindi - 2 lessons <input type="checkbox" class="t"> <input type="checkbox" class="t"></li>
+<li>History - 4 + Judiciary <input type="checkbox" class="t"> <input type="checkbox" class="t"> <input type="checkbox" class="t"> <input type="checkbox" class="t"> <input type="checkbox" class="t"></li>
+<li>Geography - 12 small <input type="checkbox" class="t"> <input type="checkbox" class="t"> <input type="checkbox" class="t"> <input type="checkbox" class="t"></li>
+<li>Physics - 4 incl Calorimetry <input type="checkbox" class="t"> <input type="checkbox" class="t"> <input type="checkbox" class="t"> <input type="checkbox" class="t"></li>
+<li>Chemistry - Electrolysis, Metallurgy <input type="checkbox" class="t"> <input type="checkbox" class="t"></li>
+<li>Biology - 6 chapters <input type="checkbox" class="t"> <input type="checkbox" class="t"> <input type="checkbox" class="t"> <input type="checkbox" class="t"> <input type="checkbox" class="t"> <input type="checkbox" class="t"></li>
+<li>Computer - pending <input type="checkbox" class="t"></li>
+</ul>
+<div class="progress"><div class="bar" id="bar"></div></div>
+<p id="pct">0% done</p>
+</div>
+
+<details open>
+<summary>Week 1 - Sep 29 to Oct 5 <span class="badge">in progress</span></summary>
+<ul>
+<li>Sep 29 Mon (Bunked) - Calorimetry blast + Electrolysis L1</li>
+<li>Sep 30 Tue - Hindi 1 + Electrolysis L2</li>
+<li>Oct 1 Wed - SUPW trip - Zero</li>
+<li>Oct 2 Thu Holiday 8h - Calorimetry finish + Electrolysis finish + History 1</li>
+<li>Oct 3 Fri - Biology 1</li>
+<li>Oct 4 Sat - Metallurgy L1 + Biology 1</li>
+<li>Oct 5 Sun - Geo 3 + English 1</li>
+</ul>
+</details>
+
+<details>
+<summary>Week 2 - Oct 6 to Oct 12</summary>
+<ul>
+<li>Oct 6 Mon Bunk - Physics 2 + Math revision</li>
+<li>Oct 7 Tue Bunk - Hindi finish + History 1 + Biology 1</li>
+<li>Oct 8 Wed - English 1</li>
+<li>Oct 9 Thu Bunk - Physics 3 + Geo 3</li>
+<li>Oct 10 Fri - Biology 1</li>
+<li>Oct 11 Sat - Metallurgy L2 + History 1</li>
+<li>Oct 12 Sun - Physics 4 + English 1 + Geo 2</li>
+</ul>
+</details>
+
+<details>
+<summary>Week 3 - Oct 13 to Oct 19 Finish Line</summary>
+<ul>
+<li>Oct 13 Mon Bunk - Bio 1 + Geo 2 + Comp 1</li>
+<li>Oct 14 Tue Bunk - History last + Judiciary + English last</li>
+<li>Oct 15 Wed - Comp 1 + Revision</li>
+<li>Oct 16 Thu Bunk - Bio last + Geo 2</li>
+<li>Oct 17 Fri - Buffer</li>
+<li>Oct 18 Sat Bunk - Full revision sweep</li>
+<li>Oct 19 Sun - 100% done, start prelim papers</li>
+</ul>
+</details>
+
+<script>
+const boxes = document.querySelectorAll('.t');
+function upd(){
+  const d = [...boxes].filter(b=>b.checked).length;
+  const p = Math.round(d/boxes.length*100);
+  document.getElementById('bar').style.width = p+'%';
+  document.getElementById('pct').innerText = p+'% done';
+}
+boxes.forEach(b=>b.onclick=upd);
+</script>
+</body>
+</html>
