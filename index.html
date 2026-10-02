@@ -21,16 +21,16 @@
   .right b { font-size: 18px; margin-right: 12px; }
   .cart { width: 42px; height: 42px; border-radius: 50%; background: #ff5a2b; border: none; color: #fff; font-size: 18px; cursor: pointer; box-shadow: 0 0 24px #ff5a2baa; }
   .stage { position: relative; flex: 1; display: flex; justify-content: center; align-items: flex-end; overflow: hidden; min-height: 440px; }
-  .tart-wrap { position: relative; width: min(520px, 80vw); aspect-ratio: 1.35 / 1; }
-  svg.arc { position: absolute; left: 50%; top: 0; transform: translateX(-50%); width: 130%; height: auto; }
+  .tart-wrap { position: relative; width: min(520px, 80vw); aspect-ratio: 1.35 / 1; display: flex; justify-content: center; align-items: flex-end; }
+  svg.arc { position: absolute; left: 50%; top: 0; transform: translateX(-50%); width: 130%; height: auto; z-index: 6; pointer-events: none; }
   .pie {
     position: absolute; left: 50%; bottom: -46%; transform: translateX(-50%);
     width: 100%; aspect-ratio: 1 / 1; border-radius: 50%;
     background: radial-gradient(circle at 50% 35%, #2b1a4a, #160f2e);
     border: 10px solid #e6c89a; display: grid; place-items: center;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.55);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.55); z-index: 1;
   }
-  .pie-label { background: rgba(0,0,0,0.6); padding: 8px 24px; border-radius: 99px; font-size: 22px; font-weight: 800; margin-bottom: 38%; }
+  .pie-label { background: rgba(0,0,0,0.6); padding: 8px 24px; border-radius: 99px; font-size: 22px; font-weight: 800; margin-bottom: 38%; z-index: 2; }
   .tab {
     position: absolute; z-index: 5;
     background: rgba(255,255,255,0.08);
@@ -81,44 +81,77 @@
       <div class="panel" id="p2"><h3>WEEK 2 - Oct 5 to Oct 11 <span class="pct" id="pp2">0%</span></h3><div id="w2"></div></div>
       <div class="panel" id="p3"><h3>WEEK 3 - Oct 12 to Oct 19 <span class="pct" id="pp3">0%</span></h3><div id="w3"></div></div>
       <div class="panel" id="p4">
-        <h3>How My Day Looks - Tomorrow <span class="pct" id="dayPct">0%</span></h3>
-        <div id="day">
-          <label><input type="checkbox" data-d /> <span>School + Tuition till 4:30</span></label>
-          <label><input type="checkbox" data-d /> <span>Gym 5:00 - 6:00</span></label>
-          <label><input type="checkbox" data-d /> <span>Study 6:30 - 9:00</span></label>
-          <label><input type="checkbox" data-d /> <span>Free hour 9:00 - 10:00</span></label>
-          <label><input type="checkbox" data-d /> <span>Sleep 10:00</span></label>
-        </div>
+        <h3>How My Day Looks - Today <span class="pct" id="dayPct">0%</span></h3>
+        <div id="day"></div>
       </div>
     </div>
   </div>
   <div class="foot"><div>Delivery Contact us</div><div>Privacy</div></div>
 </div>
+
+<!-- Firebase for all-users sync -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <script>
   const w1 = ["Sep 30 - Hindi 1 + Electrolysis L2","Oct 1 - SUPW trip Zero","Oct 2 - Calorimetry + Chemistry + History 1","Oct 3 - Hindi catchup + Biology 1","Oct 4 - Metallurgy L1 + Biology 1 + Geo 2"];
   const w2 = ["Oct 5 - Physics 2 + Geo 2 + English 1","Oct 6 - Hindi finish + History 1 + Biology 1","Oct 7 - English 1","Oct 8 - Physics 3 + Geo 3","Oct 9 - Biology 1","Oct 10 - Metallurgy L2 + History 1","Oct 11 - Physics 4 + English 1 + Geo 2"];
   const w3 = ["Oct 12 - Bio 1 + Geo 1 + Comp 1","Oct 13 - History last + Judiciary + English last","Oct 14 - Comp 1 + Revision","Oct 15 - Bio last + Geo 2","Oct 16 - Buffer","Oct 17 - Full revision sweep","Oct 18 - Buffer + papers","Oct 19 - 100% done"];
+  const dayArr = ["9:30 - 11:00 Test","11:30 - 12:00 Lunch","12:00 - 3:00 DAIS","3:00 - 4:00 Barber","4:00 - 6:00 Hindi","6:45 - 8:45 Hindi Test","9:30 Sleep"];
+
+  // TODO: paste your Firebase config here
+  // const firebaseConfig = { apiKey:"...", authDomain:"...", databaseURL:"...", projectId:"..." };
+  // firebase.initializeApp(firebaseConfig);
+  let db = null;
+  try { if (typeof firebaseConfig !== 'undefined') { firebase.initializeApp(firebaseConfig); db = firebase.database(); } } catch(e){ db = null; }
+
   const saved = JSON.parse(localStorage.getItem('pie2') || '{}');
-  function save(){ localStorage.setItem('pie2', JSON.stringify(saved)); upd(); }
+  function save(){ localStorage.setItem('pie2', JSON.stringify(saved)); if(db) db.ref('ticks').set(saved); upd(); }
+  if(db) db.ref('ticks').on('value', snap => {
+    const v = snap.val() || {};
+    Object.assign(saved, v);
+    localStorage.setItem('pie2', JSON.stringify(saved));
+    syncUI(); upd();
+  });
+
   function render(id, arr, pre){
     const box = document.getElementById(id);
+    box.innerHTML = '';
     arr.forEach((t,i)=>{
       const l = document.createElement('label');
       const key = pre+i;
       const c = document.createElement('input');
-      c.type='checkbox'; c.checked=!!saved[key]; c.dataset.study="1";
+      c.type='checkbox'; c.checked=!!saved[key]; c.dataset.study="1"; c.id='chk-'+key;
       const s = document.createElement('span'); s.textContent=t;
       if(c.checked) s.classList.add('done-line');
       c.onchange=()=>{ saved[key]=c.checked; s.classList.toggle('done-line',c.checked); save(); };
       l.appendChild(c); l.appendChild(s); box.appendChild(l);
     });
   }
-  render('w1',w1,'a'); render('w2',w2,'b'); render('w3',w3,'c');
-  document.querySelectorAll('#day input').forEach((c,i)=>{
-    c.checked=!!saved['d'+i]; c.dataset.day="1";
-    if(c.checked) c.nextElementSibling.classList.add('done-line');
-    c.onchange=()=>{ saved['d'+i]=c.checked; c.nextElementSibling.classList.toggle('done-line',c.checked); save(); };
-  });
+
+  function renderDay(){
+    const box = document.getElementById('day');
+    box.innerHTML = '';
+    dayArr.forEach((t,i)=>{
+      const l = document.createElement('label');
+      const c = document.createElement('input');
+      c.type='checkbox'; c.checked=!!saved['d'+i]; c.dataset.day="1"; c.id='chk-d'+i;
+      const s = document.createElement('span'); s.textContent=t;
+      if(c.checked) s.classList.add('done-line');
+      c.onchange=()=>{ saved['d'+i]=c.checked; s.classList.toggle('done-line',c.checked); save(); };
+      l.appendChild(c); l.appendChild(s); box.appendChild(l);
+    });
+  }
+
+  render('w1',w1,'a'); render('w2',w2,'b'); render('w3',w3,'c'); renderDay();
+
+  function syncUI(){
+    document.querySelectorAll('input[type=checkbox]').forEach(c=>{
+      const key = c.id.replace('chk-','');
+      c.checked = !!saved[key];
+      if(c.nextElementSibling) c.nextElementSibling.classList.toggle('done-line', c.checked);
+    });
+  }
+
   document.querySelectorAll('.tab').forEach(t=>{
     t.onclick=()=>{
       const p=document.getElementById(t.dataset.p);
@@ -128,6 +161,7 @@
       if(!was){ p.classList.add('open'); t.classList.add('on'); }
     };
   });
+
   function pctOf(selector){
     const boxes=[...document.querySelectorAll(selector)];
     const d=boxes.filter(b=>b.checked).length;
@@ -144,10 +178,9 @@
     document.getElementById('dayBtnPct').textContent=d.p+'%';
     document.getElementById('studyTopMini').textContent=s.p+'%';
     document.getElementById('dayTopMini').textContent=d.p+'%';
-    const w1p=pctOf('#w1 input'); const w2p=pctOf('#w2 input'); const w3p=pctOf('#w3 input');
-    document.getElementById('pp1').textContent=w1p.p+'%';
-    document.getElementById('pp2').textContent=w2p.p+'%';
-    document.getElementById('pp3').textContent=w3p.p+'%';
+    document.getElementById('pp1').textContent=pctOf('#w1 input').p+'%';
+    document.getElementById('pp2').textContent=pctOf('#w2 input').p+'%';
+    document.getElementById('pp3').textContent=pctOf('#w3 input').p+'%';
   }
   upd();
 </script>
